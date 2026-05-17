@@ -23,11 +23,6 @@ Once you finally crack the problem, the extension **automatically saves your acc
 ## 🌐 Supported Platforms
 *   LeetCode
 *   GeeksForGeeks
-*   Codeforces
-*   CodeChef
-*   HackerRank
-*   AtCoder
-*   InterviewBit
 *   TakeUForward
 
 ## 🛠️ Setup & Installation
