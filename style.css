@@ -1,0 +1,264 @@
+/* style.css — LeetCode Hint Engine */
+
+/* ── Floating button ─────────────────────────────────────────────────────── */
+#lhe-hint-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 2147483647;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 18px;
+  border: 1px solid #30363d;
+  border-radius: 40px;
+  cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  background: #1a1a2e;
+  color: #e6edf3;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+  transition: background .2s, transform .18s, box-shadow .2s, border-color .2s;
+}
+#lhe-hint-btn:hover {
+  background: #1f2a3c;
+  border-color: #f97316;
+  box-shadow: 0 6px 24px rgba(0,0,0,.6), 0 0 16px rgba(249,115,22,.25);
+  transform: translateY(-2px);
+}
+#lhe-hint-btn:active { transform: translateY(0); }
+
+/* ── Side panel ──────────────────────────────────────────────────────────── */
+#lhe-panel {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 2147483646;
+  width: 340px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04) inset;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #e6edf3;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity .25s ease, transform .28s cubic-bezier(.34,1.2,.64,1);
+}
+#lhe-panel.lhe-panel--open {
+  opacity: 1;
+  transform: translateX(0);
+}
+#lhe-panel.lhe-panel--dragging { cursor: grabbing; user-select: none; }
+#lhe-panel::-webkit-scrollbar { width: 4px; }
+#lhe-panel::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+
+/* ── Panel header ────────────────────────────────────────────────────────── */
+.lhe-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px 11px;
+  border-bottom: 1px solid #21262d;
+  cursor: grab;
+  user-select: none;
+}
+.lhe-panel-header:active { cursor: grabbing; }
+.lhe-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f0f6fc;
+}
+.lhe-panel-logo { font-size: 16px; }
+#lhe-panel-close {
+  background: none;
+  border: none;
+  color: #8b949e;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: background .15s, color .15s;
+}
+#lhe-panel-close:hover { background: #21262d; color: #e6edf3; }
+
+/* ── Problem subtitle ────────────────────────────────────────────────────── */
+.lhe-panel-problem {
+  font-size: 11px;
+  font-weight: 500;
+  color: #8b949e;
+  padding: 10px 16px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Panel body ──────────────────────────────────────────────────────────── */
+.lhe-panel-body { padding: 12px 16px; }
+
+/* ── Loader ──────────────────────────────────────────────────────────────── */
+.lhe-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 0;
+  color: #8b949e;
+  font-size: 12.5px;
+}
+.lhe-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #21262d;
+  border-top-color: #f97316;
+  border-radius: 50%;
+  animation: lhe-spin .7s linear infinite;
+}
+@keyframes lhe-spin { to { transform: rotate(360deg); } }
+
+/* ── Hint cards ──────────────────────────────────────────────────────────── */
+.lhe-hints-list { display: flex; flex-direction: column; gap: 8px; }
+
+.lhe-hint {
+  border-radius: 10px;
+  border: 1px solid #21262d;
+  background: #161b22;
+  overflow: hidden;
+}
+.lhe-hint--hidden { display: none; }
+.lhe-hint--visible { display: block; }
+
+/* fade-in only on the newest hint */
+.lhe-hint--animate {
+  animation: lhe-fade-in .4s ease forwards;
+}
+@keyframes lhe-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lhe-hint-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px 7px;
+  border-bottom: 1px solid #21262d;
+}
+.lhe-hint-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.lhe-hint-label { font-size: 11.5px; font-weight: 600; color: #8b949e; }
+.lhe-hint-text  { font-size: 12.5px; line-height: 1.65; color: #c9d1d9; padding: 9px 12px 11px; }
+
+/* Hint 1 — blue */
+.lhe-hint--1 { border-color: #1f3a5f; }
+.lhe-hint--1 .lhe-hint-badge { background: rgba(56,139,253,.15); color: #79c0ff; }
+/* Hint 2 — purple */
+.lhe-hint--2 { border-color: #3b2d5e; }
+.lhe-hint--2 .lhe-hint-badge { background: rgba(188,140,255,.15); color: #d2a8ff; }
+/* Hint 3 — orange */
+.lhe-hint--3 { border-color: #4a2f10; }
+.lhe-hint--3 .lhe-hint-badge { background: rgba(249,115,22,.15); color: #fdba74; }
+
+/* ── Panel footer ────────────────────────────────────────────────────────── */
+.lhe-panel-footer { margin-top: 12px; }
+
+.lhe-next-btn {
+  width: 100%;
+  padding: 9px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+  box-shadow: 0 0 12px rgba(249,115,22,.3);
+}
+.lhe-next-btn:hover { opacity: .9; transform: translateY(-1px); }
+.lhe-next-btn:active { transform: translateY(0); }
+
+/* ── Done message ────────────────────────────────────────────────────────── */
+.lhe-done-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #0f1c13;
+  border: 1px solid #3fb950;
+  border-radius: 10px;
+  padding: 12px 14px;
+  animation: lhe-fade-in .4s ease forwards;
+}
+.lhe-done-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.lhe-done-msg p { font-size: 12.5px; font-weight: 600; color: #7ee787; line-height: 1.5; }
+.lhe-done-sub { font-weight: 400; color: #8b949e; }
+.lhe-walkthrough-link { color: #f97316; text-decoration: none; }
+.lhe-walkthrough-link:hover { text-decoration: underline; }
+
+/* ── Error state ─────────────────────────────────────────────────────────── */
+.lhe-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 20px 8px;
+}
+.lhe-error-icon { font-size: 28px; }
+.lhe-error-title { font-size: 13px; font-weight: 700; color: #ffa198; }
+.lhe-error-body  { font-size: 12px; color: #8b949e; line-height: 1.55; }
+.lhe-retry-btn {
+  margin-top: 10px;
+  padding: 8px 20px;
+  background: #161b22;
+  border: 1px solid #f85149;
+  border-radius: 8px;
+  color: #ffa198;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .15s;
+}
+.lhe-retry-btn:hover { background: #1c1218; }
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+.lhe-toast {
+  position: fixed;
+  bottom: 88px;
+  right: 28px;
+  z-index: 2147483647;
+  max-width: 300px;
+  padding: 11px 15px;
+  border-radius: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  background: #161b22;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  box-shadow: 0 8px 24px rgba(0,0,0,.55);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .25s ease, transform .25s ease;
+  pointer-events: none;
+}
+.lhe-toast--visible   { opacity: 1; transform: translateY(0); }
+.lhe-toast--error     { border-color: #f85149; background: #1c1218; color: #ffa198; }
+.lhe-toast--info      { border-color: #f97316; background: #1a1510; color: #fdba74; }
+.lhe-toast--success   { border-color: #3fb950; background: #0f1c13; color: #7ee787; }

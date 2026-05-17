@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "LeetCode Hint Engine",
+  "version": "2.0.0",
+  "description": "AI hints + auto-save solutions across coding platforms.",
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["activeTab", "storage", "scripting", "identity"],
+  "host_permissions": [
+    "https://leetcode.com/*",
+    "https://codeforces.com/*",
+    "https://takeuforward.org/*",
+    "https://www.geeksforgeeks.org/*",
+    "https://www.codechef.com/*",
+    "https://atcoder.jp/*",
+    "https://www.hackerrank.com/*",
+    "https://www.interviewbit.com/*",
+    "https://github.com/*",
+    "https://api.github.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*",
+    "https://api.cohere.com/*",
+    "https://api.groq.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Hint Engine",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://leetcode.com/*",
+        "https://codeforces.com/problemset/problem/*",
+        "https://codeforces.com/contest/*/problem/*",
+        "https://takeuforward.org/*",
+        "https://www.geeksforgeeks.org/*",
+        "https://www.codechef.com/problems/*",
+        "https://atcoder.jp/contests/*/tasks/*",
+        "https://www.hackerrank.com/challenges/*",
+        "https://www.interviewbit.com/problems/*"
+      ],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

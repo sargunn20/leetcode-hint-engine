@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>LeetCode Hint Engine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      width: 340px;
+      max-height: 580px;
+      overflow-y: auto;
+      font-family: 'Inter', sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      scrollbar-width: thin;
+      scrollbar-color: #30363d transparent
+    }
+
+    body::-webkit-scrollbar {
+      width: 4px
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 4px
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, #161b22, #0d1117);
+      border-bottom: 1px solid #21262d;
+      position: sticky;
+      top: 0;
+      z-index: 10
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #f97316, #fb923c);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      flex-shrink: 0;
+      box-shadow: 0 0 14px rgba(249, 115, 22, .4)
+    }
+
+    .header-text h1 {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #f0f6fc
+    }
+
+    .header-text p {
+      font-size: 11px;
+      color: #8b949e;
+      margin-top: 2px
+    }
+
+    /* Sections */
+    .section {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: #8b949e
+    }
+
+    .divider {
+      height: 1px;
+      background: #21262d
+    }
+
+    /* Fields */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px
+    }
+
+    label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: .05em
+    }
+
+    select,
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 12.5px;
+      font-family: 'Inter', sans-serif;
+      color: #e6edf3;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s
+    }
+
+    select {
+      padding-right: 8px;
+      cursor: pointer
+    }
+
+    input[type="password"],
+    input[type="text"] {
+      padding-right: 36px
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, .15)
+    }
+
+    input::placeholder {
+      color: #484f58
+    }
+
+    /* Input wrapper (for eye toggle) */
+    .input-wrapper {
+      position: relative
+    }
+
+    .toggle-vis {
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #484f58;
+      padding: 2px;
+      display: flex;
+      transition: color .15s
+    }
+
+    .toggle-vis:hover {
+      color: #8b949e
+    }
+
+    /* Help text */
+    .help {
+      font-size: 10.5px;
+      color: #484f58;
+      line-height: 1.5
+    }
+
+    .help a {
+      color: #f97316;
+      text-decoration: none
+    }
+
+    .help a:hover {
+      text-decoration: underline
+    }
+
+    /* Primary button */
+    .btn-primary {
+      width: 100%;
+      padding: 9px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: opacity .2s, transform .15s;
+      box-shadow: 0 0 10px rgba(249, 115, 22, .3)
+    }
+
+    .btn-primary:hover {
+      opacity: .9;
+      transform: translateY(-1px)
+    }
+
+    .btn-primary:active {
+      transform: translateY(0)
+    }
+
+    .btn-primary:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    /* Ghost / outline button */
+    .btn-ghost {
+      width: 100%;
+      padding: 9px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 12.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px
+    }
+
+    .btn-ghost:hover {
+      border-color: #f97316;
+      background: #1a1a2e
+    }
+
+    .btn-ghost:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    /* Confirmation */
+    .confirm {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #3fb950;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .3s, transform .3s;
+      min-height: 16px
+    }
+
+    .confirm.show {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    /* Redirect URI box */
+    .uri-box {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .uri-box code {
+      font-size: 10px;
+      color: #8b949e;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid #30363d;
+      border-radius: 5px;
+      color: #8b949e;
+      font-size: 10px;
+      padding: 3px 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color .15s, color .15s;
+      font-family: 'Inter', sans-serif
+    }
+
+    .copy-btn:hover {
+      border-color: #f97316;
+      color: #f97316
+    }
+
+    /* GitHub user card */
+    .gh-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 10px 12px
+    }
+
+    .gh-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #30363d
+    }
+
+    .gh-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .gh-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #f0f6fc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .gh-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: #3fb950;
+      background: rgba(63, 185, 80, .12);
+      padding: 1px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(63, 185, 80, .25)
+    }
+
+    .disconnect-btn {
+      background: none;
+      border: 1px solid #f85149;
+      border-radius: 6px;
+      color: #f85149;
+      font-size: 10px;
+      padding: 3px 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+      font-family: 'Inter', sans-serif
+    }
+
+    .disconnect-btn:hover {
+      background: rgba(248, 81, 73, .1)
+    }
+
+    /* Footer */
+    .footer {
+      padding: 10px 18px 4px;
+      font-size: 10px;
+      color: #484f58;
+      text-align: center;
+      border-top: 1px solid #21262d
+    }
+
+    .footer-grind {
+      padding: 6px 18px 14px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-align: center;
+      background: linear-gradient(90deg, #f97316, #fb923c, #f97316);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: grind-shine 3s linear infinite;
+    }
+
+    @keyframes grind-shine {
+      0% {
+        background-position: 0% center;
+      }
+
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    /* Help Modal */
+    .icon-btn {
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 10.5px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      color: #f97316;
+      padding: 4px 10px;
+      letter-spacing: 0.02em;
+      transition: background .2s, border-color .2s, color .2s;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .icon-btn:hover {
+      background: rgba(249, 115, 22, 0.2);
+      border-color: rgba(249, 115, 22, 0.5);
+      color: #fb923c;
+    }
+
+    .help-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0d1117;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1)
+    }
+
+    .help-modal.open {
+      transform: translateX(0)
+    }
+
+    .help-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #161b22, #0d1117);
+      border-bottom: 1px solid #21262d;
+      flex-shrink: 0
+    }
+
+    .help-header h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f0f6fc;
+      flex: 1
+    }
+
+    .help-body {
+      padding: 18px;
+      overflow-y: auto;
+      flex: 1;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #c9d1d9
+    }
+
+    .help-body h3 {
+      font-size: 13px;
+      color: #f0f6fc;
+      margin: 16px 0 8px;
+      font-weight: 600
+    }
+
+    .help-body h3:first-child {
+      margin-top: 0
+    }
+
+    .help-body ol,
+    .help-body ul {
+      padding-left: 20px;
+      margin-bottom: 12px
+    }
+
+    .help-body li {
+      margin-bottom: 6px
+    }
+
+    .help-body a {
+      color: #f97316;
+      text-decoration: none
+    }
+
+    .help-body a:hover {
+      text-decoration: underline
+    }
+
+    .help-body code {
+      background: #161b22;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 11px
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="logo">💡</div>
+    <div class="header-text" style="flex:1">
+      <h1>LeetCode Hint Engine</h1>
+      <p>Multi-platform · Multi-AI</p>
+    </div>
+    <button id="helpBtn" class="icon-btn" aria-label="Setup Guide">need help?</button>
+  </div>
+
+  <!-- ── AI Provider Section ────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">AI Provider</div>
+
+    <div class="field">
+      <label for="providerSelect">Provider</label>
+      <select id="providerSelect">
+        <option value="groq">Groq (Recommended)</option>
+        <option value="gemini">Gemini (Recommended)</option>
+        <option value="openai">OpenAI</option>
+        <option value="claude">Claude</option>
+        <option value="cohere">Cohere</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label id="apiKeyLabel">API Key</label>
+      <div class="input-wrapper">
+        <input type="password" id="apiKeyInput" autocomplete="off" spellcheck="false" />
+        <button class="toggle-vis" id="toggleVis" aria-label="Toggle visibility">
+          <svg id="eyeOn" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <svg id="eyeOff" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="display:none">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+            <line x1="1" y1="1" x2="23" y2="23" />
+          </svg>
+        </button>
+      </div>
+      <p class="help" id="apiKeyHelp">Get your key at <a id="apiKeyLink" href="#" target="_blank">—</a></p>
+    </div>
+
+    <button class="btn-primary" id="saveBtn">Save API Key</button>
+    <div class="confirm" id="saveConfirm">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      Saved!
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── GitHub Section ─────────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-title">GitHub</div>
+
+    <!-- Not connected -->
+    <div id="ghNotConnected">
+      <div class="field" style="margin-bottom:4px">
+        <label for="githubClientId">OAuth App Client ID</label>
+        <input type="text" id="githubClientId" placeholder="Ov23li••••••••••••••••" autocomplete="off" />
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <label
+          style="font-size:10.5px;font-weight:600;color:#8b949e;text-transform:uppercase;letter-spacing:.05em">Callback
+          URL (copy into OAuth App)</label>
+        <div class="uri-box">
+          <code id="redirectUriDisplay">Loading…</code>
+          <button class="copy-btn" id="copyUriBtn">Copy</button>
+        </div>
+      </div>
+
+      <button class="btn-ghost" id="githubConnectBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+        </svg>
+        Connect GitHub
+      </button>
+
+      <p class="help">
+        <a href="https://github.com/settings/developers" target="_blank">Create a GitHub OAuth App ↗</a>
+        · paste your Client ID above.
+      </p>
+    </div>
+
+    <!-- Connected -->
+    <div id="ghConnected" style="display:none;flex-direction:column;gap:12px">
+      <div class="gh-card">
+        <img class="gh-avatar" id="ghAvatar" src="" alt="avatar" />
+        <div class="gh-info">
+          <div class="gh-name" id="ghUsername">—</div>
+          <span class="gh-badge">Connected</span>
+        </div>
+        <button class="disconnect-btn" id="githubDisconnectBtn">Disconnect</button>
+      </div>
+
+      <div class="field">
+        <label for="repoSelect">Save Solutions To</label>
+        <select id="repoSelect">
+          <option value="">— select a repo —</option>
+        </select>
+      </div>
+
+      <button class="btn-ghost" id="saveRepoBtn">Save Repository</button>
+      <div class="confirm" id="repoConfirm">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        Repository saved!
+      </div>
+    </div>
+  </div>
+  <div class="footer">Your keys and tokens are stored locally and never shared.</div>
+  <div class="footer-grind">KEEP UP THE GRIND 🌟</div>
+
+  <!-- Help Modal -->
+  <div class="help-modal" id="helpModal">
+    <div class="help-header">
+      <h2>Setup Guide</h2>
+      <button id="closeHelpBtn" class="icon-btn" aria-label="Close">✕</button>
+    </div>
+    <div class="help-body">
+
+      <h3>Step 1 — Get a Free AI Key</h3>
+      <p style="margin-bottom:8px">Choose a provider below and grab a free key:</p>
+      <ul>
+        <li>
+          <strong>Groq (Best — Free forever)</strong><br />
+          <a href="https://console.groq.com/keys" target="_blank">console.groq.com</a>
+          → Sign up with Google → <em>Create API Key</em> → Copy it
+        </li>
+        <li style="margin-top:8px">
+          <strong>Gemini (Google — Free)</strong><br />
+          <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a>
+          → Sign in → <em>Create API Key</em> → Copy it
+        </li>
+      </ul>
+      <p>→ Paste the key in <strong>AI Provider → API Key</strong> field above and hit <strong>Save API Key</strong>.
+      </p>
+
+      <h3>Step 2 — Connect GitHub</h3>
+      <p style="margin-bottom:6px">This lets the extension auto-save your solutions to a GitHub repo.</p>
+      <ol>
+        <li>Go to <a href="https://github.com/settings/developers" target="_blank">github.com/settings/developers</a>
+        </li>
+        <li>Click <strong>OAuth Apps → New OAuth App</strong></li>
+        <li>Fill in:
+          <ul style="margin-top:4px">
+            <li><em>Application name:</em> <code>Hint Engine</code></li>
+            <li><em>Homepage URL:</em> <code>https://github.com</code></li>
+            <li><em>Authorization callback URL:</em> copy the <strong>Callback URL</strong> shown in the GitHub section
+              below ↓</li>
+          </ul>
+        </li>
+        <li>Click <strong>Register application</strong></li>
+        <li>Copy the <strong>Client ID</strong> shown on the next page</li>
+        <li>Click <strong>Generate a new client secret</strong> → copy it (shown only once!)</li>
+      </ol>
+      <p>→ Paste <strong>Client ID</strong> in the GitHub section → click <strong>Connect GitHub</strong> → paste Client
+        Secret when prompted.</p>
+
+      <h3>Step 3 — Pick a Repo</h3>
+      <p>After connecting, a dropdown will appear with all your GitHub repos. Select one (e.g.
+        <code>my-solutions</code>) and click <strong>Save Repository</strong>.
+      </p>
+      <p style="margin-top:6px">That's it! Every accepted submission will automatically create a file
+        like:<br /><code>solutions/leetcode/two-sum.md</code></p>
+
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
