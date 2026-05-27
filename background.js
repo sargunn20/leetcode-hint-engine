@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           if (window.ace && document.querySelector('.ace_editor')) {
             return window.ace.edit(document.querySelector('.ace_editor')).getValue();
           }
-        } catch(e) {}
+        } catch (e) { }
         return '';
       }
     }).then(results => {
@@ -37,10 +37,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       method: 'POST',
       headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        client_id:     request.clientId,
+        client_id: request.clientId,
         client_secret: request.clientSecret,
-        code:          request.code,
-        redirect_uri:  request.redirectUri,
+        code: request.code,
+        redirect_uri: request.redirectUri,
       }),
     })
       .then(r => r.json())
